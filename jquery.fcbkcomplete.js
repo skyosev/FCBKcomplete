@@ -183,7 +183,8 @@ jQuery(function($){
             function addInput(focusme){
                 var li = $(document.createElement("li"));
                 var input = $(document.createElement("input"));
-                
+                var getBoxTimeout = 0;
+
                 li.attr({
                     "class": "bit-input",
                     "id": elemid + "_annoninput"
@@ -264,11 +265,19 @@ jQuery(function($){
                                 bindEvents();
                             }
                             else {
-                                $.getJSON(options.json_url + "?tag=" + etext, null, function(data){
-                                    addMembers(etext, data);
-                                    json_cache = true;
-                                    bindEvents();
-                                });
+                                getBoxTimeout++;
+                                var getBoxTimeoutValue = getBoxTimeout;   
+                
+                                setTimeout (function() {
+                
+                                    if (getBoxTimeoutValue != getBoxTimeout) return;
+
+                                    $.getJSON(options.json_url + "?tag=" + etext, null, function (data) {
+                                        addMembers(etext, data);
+                                        json_cache = true;
+                                        bindEvents();
+                                    });
+                                }, options.delay);
                             }
                         }
                         else {
@@ -562,7 +571,8 @@ jQuery(function($){
                 maxshownitems: 30,
                 maxitems: 0,
                 onselect: "",
-                onremove: ""
+                onremove: "",
+                delay: 350
             }, opt);
             
             //system variables
